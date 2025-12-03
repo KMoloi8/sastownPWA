@@ -27,6 +27,14 @@
   <link rel="canonical" href="https://kmoloi8.github.io/sastownhub/" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-XxDF8Ma2tq6G0Vkf1SPqlS...Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FFC107">
+  <link rel="apple-touch-icon" href="/logo192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  
   <style>
     :root {
       --light-bg: #ffffff;
@@ -265,5 +273,61 @@
     });
   </script>
 
+  <script>
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').then(reg => {
+      console.log('Service Worker registered', reg);
+
+      // Listen for updates from SW
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New content is available; you may show a UI to notify user
+            console.log('New content available, please refresh.');
+            // Optionally notify clients to skip waiting:
+            // newWorker.postMessage({type: 'SKIP_WAITING'});
+          }
+        });
+      });
+    }).catch(err => console.error('SW registration failed:', err));
+  }
+
+  // "Add to Home Screen" logic
+  let deferredPrompt;
+  const a2hsBtnId = 'sastown-install-btn';
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // show a custom install button if you want
+    // For example, add a small button somewhere with id 'sastown-install-btn'
+    const btn = document.getElementById(a2hsBtnId);
+    if (btn) btn.style.display = 'inline-block';
+  });
+
+  function showInstallPrompt() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choiceResult => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      deferredPrompt = null;
+      const btn = document.getElementById(a2hsBtnId);
+      if (btn) btn.style.display = 'none';
+    });
+  }
+</script>
+
+<!-- Example inline install button (optional): -->
+<!--
+<button id="sastown-install-btn" style="display:none; position:fixed; bottom:90px; right:20px; background:#FFC107; color:#111; border:none; padding:10px 14px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.12);" onclick="showInstallPrompt()">Add SasTownHub</button>
+-->
+
+  
 </body>
 </html>
