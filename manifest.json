@@ -1,0 +1,27 @@
+{
+  "name": "SasTownHub",
+  "short_name": "SasTownHub",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFC107",
+  "theme_color": "#FFC107",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
